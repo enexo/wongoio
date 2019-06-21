@@ -14,20 +14,12 @@ if (isset($_POST['submit'])){
         //cleans the entry form from nasty PHP injection
         $username   = mysqli_real_escape_string($connection, $username);
         $email      = mysqli_real_escape_string($connection, $email);
-        $password   = mysqli_real_escape_string($connection, $password);
 
-        //inserts randSalt to encrypt password
-        $query = "SELECT randSalt FROM users";
-        $select_randsalt_query = mysqli_query($connection, $query);
-
-        if (!$select_randsalt_query) {
-            die("Query Failed" . mysqli_error($connection));
-        }
-
-        $row = mysqli_fetch_array($select_randsalt_query);
-        $salt = $row['randSalt'];
+        // This will save a hashed password in your db so it isn't plain text
+        $password   = password_hash(mysqli_real_escape_string($connection, $password), PASSWORD_BCRYPT);
 
         $query = "INSERT INTO users (username, email, password) VALUES ('{$username}','{$email}','{$password}')";
+
         $register_user_query = mysqli_query($connection, $query);
         if ($register_user_query) {
             die("Query Failed ". mysqli_error($connection) . mysqli_errno($connection));
@@ -35,11 +27,6 @@ if (isset($_POST['submit'])){
 
         $message = "Your Registration has been submitted!";
     }
-
-
-
-
-
 }
 
 
@@ -50,7 +37,7 @@ if (isset($_POST['submit'])){
 
 <!-- Page Content -->
     <div class="container">
-    
+
 <section id="login">
     <div class="container">
         <div class="row">
@@ -70,10 +57,10 @@ if (isset($_POST['submit'])){
                             <label for="password" class="sr-only">Password</label>
                             <input type="password" name="password" id="key" class="form-control" placeholder="Password">
                         </div>
-                
+
                         <input type="submit" name="submit" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Register">
                     </form>
-                 
+
                 </div>
             </div> <!-- /.col-xs-12 -->
         </div> <!-- /.row -->
